@@ -3,7 +3,7 @@ import useInput from "../hooks/use-input";
 const BasicForm = (props) => {
   const {
     value: enteredName,
-    isValid: enteredNameIsValid,
+    isValid: nameIsValid,
     hasError: nameInputIsInvalid,
     valueChangeHandler: nameChangeHandler,
     inputBlurHandler: nameInputBlurHandler,
@@ -12,7 +12,7 @@ const BasicForm = (props) => {
 
   const {
     value: enteredLast,
-    isValid: enteredLastIsValid,
+    isValid: lastIsValid,
     hasError: lastInputIsInvalid,
     valueChangeHandler: lastChangeHandler,
     inputBlurHandler: lastInputBlurHandler,
@@ -21,17 +21,23 @@ const BasicForm = (props) => {
 
   const {
     value: enteredEmail,
-    isValid: enteredEmailIsValid,
+    isValid: emailIsValid,
     hasError: emailInputIsInvalid,
     valueChangeHandler: emailChangeHandler,
     inputBlurHandler: emailInputBlurHandler,
     reset: resetEmail
-  } = useInput((value) => value.includes('@'));
+  } = useInput((value) => value.includes("@"));
+
+  let formIsValid = false;
+
+  if (nameIsValid && lastIsValid && emailIsValid) {
+    formIsValid = true;
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!enteredNameIsValid || !enteredLastIsValid || !enteredEmailIsValid) {
+    if (!formIsValid) {
       return;
     }
 
@@ -87,11 +93,19 @@ const BasicForm = (props) => {
       </div>
       <div className={emailInputClass}>
         <label htmlFor="email">E-Mail Address</label>
-        <input type="email" id="email" value={enteredEmail} onBlur={emailInputBlurHandler} onChange={emailChangeHandler} />
+        <input
+          type="email"
+          id="email"
+          value={enteredEmail}
+          onBlur={emailInputBlurHandler}
+          onChange={emailChangeHandler}
+        />
       </div>
-      {emailInputIsInvalid && <p className='error-text'>Email must include '@'</p>}
+      {emailInputIsInvalid && (
+        <p className="error-text">Email must include '@'</p>
+      )}
       <div className="form-actions">
-        <button>Submit</button>
+        <button disabled={!formIsValid}>Submit</button>
       </div>
     </form>
   );
